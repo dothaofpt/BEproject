@@ -15,17 +15,23 @@ spring:
 
       routes:
         - id: user_service
-          uri: http://localhost:8082
+          uri: lb://user-service
           predicates:
             - Path=${app.api-prefix}/auth/**
           filters:
             - StripPrefix=2
+
         - id: product_service
-          uri: http://localhost:8080
+          uri: lb://product-service  
           predicates:
             - Path=${app.api-prefix}/products/**, ${app.api-prefix}/categories/**
           filters:
             - StripPrefix=2
 
 jwt:
-  secret: your_secret_key_here
+  secret: "secret"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/  # URL của Eureka Server

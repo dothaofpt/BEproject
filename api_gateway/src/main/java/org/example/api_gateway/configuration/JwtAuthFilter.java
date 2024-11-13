@@ -28,7 +28,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
 
-            // Bỏ qua các endpoint /auth/*
+
             if (path.contains("/auth/")) {
                 return chain.filter(exchange);
             }
@@ -57,6 +57,6 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     }
 
     public static class Config {
-        // Configuration properties
+
     }
 }

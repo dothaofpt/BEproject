@@ -42,11 +42,22 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Cập nhật phiên bản jjwt -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.9.1</version>
+			<version>0.9.1</version> <!-- Phiên bản mới nhất -->
 		</dependency>
+
+		<!-- Thêm thư viện javax.xml.bind (nếu cần cho Java 9 trở lên) -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+		<!-- Spring Cloud Eureka Client -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>

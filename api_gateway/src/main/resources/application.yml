@@ -12,17 +12,16 @@ spring:
     gateway:
       default-filters:
         - name: JwtAuthFilter
-
       routes:
-        - id: user_service
-          uri: lb://user-service
+        - id: serviceuser
+          uri: lb://serviceuser
           predicates:
             - Path=${app.api-prefix}/auth/**
           filters:
             - StripPrefix=2
 
-        - id: product_service
-          uri: lb://product-service  
+        - id: serviceproduct
+          uri: lb://serviceproduct
           predicates:
             - Path=${app.api-prefix}/products/**, ${app.api-prefix}/categories/**
           filters:
@@ -33,5 +32,5 @@ jwt:
 
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/  # URL của Eureka Server
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

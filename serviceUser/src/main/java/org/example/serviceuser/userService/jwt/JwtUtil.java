@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    // Khóa mạnh được tạo từ lớp Keys
     private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateToken(String username) {
@@ -26,8 +25,8 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Hết hạn sau 10 giờ
-                .signWith(SECRET_KEY) // Sử dụng khóa mạnh
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .signWith(SECRET_KEY)
                 .compact();
     }
 
@@ -45,6 +44,10 @@ public class JwtUtil {
     }
 
     private Boolean isTokenExpired(String token) {
-        return extractAllClaims(token).getExpiration().before(new Date());
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractAllClaims(token).getExpiration();
     }
 }

@@ -16,11 +16,11 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())  // Tắt CSRF nếu không cần thiết
+                .csrf(csrf -> csrf.disable())
                 .authorizeRequests()
-                .requestMatchers("/**").permitAll()  // Cho phép tất cả các yêu cầu không cần xác thực
+                .requestMatchers("/**").permitAll()
                 .and()
-                .cors(Customizer.withDefaults());  // Sử dụng CORS cấu hình mặc định (Spring Security 6.1)
+                .cors(Customizer.withDefaults());
 
         return http.build();
     }
@@ -29,9 +29,9 @@ public class SecurityConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:4200")  // Cho phép frontend ở localhost:4200
-                .allowedMethods("GET", "POST", "PUT", "DELETE")  // Các phương thức HTTP được phép
-                .allowedHeaders("*")  // Cho phép tất cả các header
-                .allowCredentials(true);  // Cho phép gửi cookies nếu cần
+                .allowedOrigins("http://localhost:4200")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }

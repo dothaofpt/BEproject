@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
@@ -20,33 +20,42 @@ public class ProductController {
 
     // Tạo sản phẩm mới
     @PostMapping
-    public ResponseEntity<Map<String, String>> createProduct(@RequestBody ProductDTO productDTO) {
-        Map<String, String> response = new HashMap<>();
-        try {
-            // Kiểm tra nếu categoryId là null
-            if (productDTO.getCategoryId() == null) {
-                response.put("error", "Category ID cannot be null");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-            }
+    public ResponseEntity<Map<String, String>> createProduct(
+            @RequestHeader("username") String username,
+            @RequestBody ProductDTO productDTO) {
 
+        System.out.println("Username from header: " + username);
+        Map<String, String> response = new HashMap<>();
+
+        // Kiểm tra xem CategoryId có null không
+        if (productDTO.getCategoryId() == null) {
+            response.put("error", "Category ID cannot be null");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        try {
+            // Tạo sản phẩm mới
             int result = productService.createProduct(productDTO);
+
+            // Kiểm tra kết quả và trả về phản hồi phù hợp
             if (result == 1) {
-                response.put("message", "Product created successfully");
+                response.put("message", "Product created successfully by " + username);
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             } else {
                 response.put("message", "Product creation failed");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
+
         } catch (IllegalArgumentException e) {
+            // Xử lý lỗi và trả về thông báo lỗi
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 
-
     // Lấy danh sách sản phẩm theo category_id
     @GetMapping("/{categoryId}")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategoryId(@PathVariable Integer categoryId) {
+    public ResponseEntity<List<ProductDTO>> getProductsByCategoryId(@RequestHeader("username") String username, @PathVariable Integer categoryId) {
         try {
             List<ProductDTO> products = productService.getProductsByCategoryId(categoryId);
             return ResponseEntity.ok(products);
@@ -57,12 +66,12 @@ public class ProductController {
 
     // Cập nhật sản phẩm
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, String>> updateProduct(@PathVariable Integer id, @RequestBody ProductDTO productDTO) {
+    public ResponseEntity<Map<String, String>> updateProduct(@RequestHeader("username") String username, @PathVariable Integer id, @RequestBody ProductDTO productDTO) {
         try {
             int result = productService.updateProduct(id, productDTO);
             Map<String, String> response = new HashMap<>();
             if (result == 1) {
-                response.put("message", "Product updated successfully");
+                response.put("message", "Product updated successfully by " + username);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("message", "Product update failed");
@@ -77,12 +86,12 @@ public class ProductController {
 
     // Xóa sản phẩm
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteProduct(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, String>> deleteProduct(@RequestHeader("username") String username, @PathVariable Integer id) {
         try {
             int result = productService.deleteProduct(id);
             Map<String, String> response = new HashMap<>();
             if (result == 1) {
-                response.put("message", "Product deleted successfully");
+                response.put("message", "Product deleted successfully by " + username);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("message", "Product deletion failed");
@@ -97,7 +106,7 @@ public class ProductController {
 
     // Lấy sản phẩm theo id
     @GetMapping("/product/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Integer id) {
+    public ResponseEntity<ProductDTO> getProductById(@RequestHeader("username") String username, @PathVariable Integer id) {
         ProductDTO product = productService.getProductById(id);
         if (product != null) {
             return ResponseEntity.ok(product);
@@ -106,4 +115,3 @@ public class ProductController {
         }
     }
 }
-

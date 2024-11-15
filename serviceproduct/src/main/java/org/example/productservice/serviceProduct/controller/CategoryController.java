@@ -18,10 +18,10 @@ public class CategoryController {
 
     // Tạo mới danh mục
     @PostMapping
-    public ResponseEntity<String> createCategory(@RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<String> createCategory(@RequestHeader("username") String username, @RequestBody CategoryDTO categoryDTO) {
         int result = categoryService.createCategory(categoryDTO);
         if (result == 1) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("Category created successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Category created successfully by " + username);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Category creation failed");
         }
@@ -46,10 +46,10 @@ public class CategoryController {
 
     // Cập nhật danh mục
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateCategory(@PathVariable Integer id, @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<String> updateCategory(@RequestHeader("username") String username, @PathVariable Integer id, @RequestBody CategoryDTO categoryDTO) {
         int result = categoryService.updateCategory(id, categoryDTO);
         if (result == 1) {
-            return ResponseEntity.ok("Category updated successfully");
+            return ResponseEntity.ok("Category updated successfully by " + username);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Category update failed");
         }
@@ -57,10 +57,10 @@ public class CategoryController {
 
     // Xóa danh mục
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCategory(@PathVariable Integer id) {
+    public ResponseEntity<String> deleteCategory(@RequestHeader("username") String username, @PathVariable Integer id) {
         int result = categoryService.deleteCategory(id);
         if (result == 1) {
-            return ResponseEntity.ok("Category deleted successfully");
+            return ResponseEntity.ok("Category deleted successfully by " + username);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Category deletion failed");
         }

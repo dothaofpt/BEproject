@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Config> {
 
@@ -28,9 +30,8 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
 
-
             if (path.contains("/auth/")) {
-                return chain.filter(exchange);
+                return chain.filter(exchange);  // Bỏ qua các yêu cầu tới "/auth/"
             }
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
@@ -38,16 +39,24 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
             }
 
             String authorizationHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-            String token = authorizationHeader.substring(7);
+            String token = authorizationHeader.substring(7);  // Loại bỏ "Bearer "
 
             try {
                 Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-                exchange.getRequest().mutate().header("username", claims.getSubject()).build();
+                String username = claims.getSubject();
+
+                // Thêm thông tin từ token vào request headers
+                exchange.getRequest().mutate()
+                        .header("username", username)
+                        .header("roles", String.join(",", claims.get("roles", List.class)))
+                        .build();
             } catch (SignatureException e) {
                 return this.onError(exchange, "Invalid JWT signature", 401);
+            } catch (Exception e) {
+                return this.onError(exchange, "JWT token parsing error", 401);
             }
 
-            return chain.filter(exchange);
+            return chain.filter(exchange);  // Tiếp tục xử lý yêu cầu
         };
     }
 
@@ -57,6 +66,5 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     }
 
     public static class Config {
-
     }
 }
